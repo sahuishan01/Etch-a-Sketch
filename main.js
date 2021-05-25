@@ -46,9 +46,9 @@ const randomColor = (boxes) => {
       var red = parseInt(Math.random() * (255 - 50) + 50);
       var blue = parseInt(Math.random() * (255 - 50) + 50);
       var green = parseInt(Math.random() * (255 - 50) + 50);
-      var opacity = Math.random();
+      var opacity = Math.random() * 2;
       box1.style.backgroundColor =
-        "rgb(" + red + "," + green + "," + blue + ")";
+        "rgba(" + red + "," + green + "," + blue + "," + opacity + ")";
     });
   });
 };
@@ -76,8 +76,8 @@ const rainbowColor = (boxes) => {
   boxes.forEach((box1) => {
     box1.addEventListener("mouseover", () => {
       var color = rainbowArr[parseInt(Math.random() * 7)];
+      box1.style.opacity = "1";
       box1.style.backgroundColor = color;
-      box1.style.opacity = "0.7";
     });
   });
 };
@@ -94,10 +94,12 @@ greyScale.addEventListener("click", () => {
 });
 const greyColor = (boxes) => {
   boxes.forEach((box1) => {
+    console.log("running completed");
+    let opacity = 0.1;
     box1.addEventListener("mouseover", () => {
-      var color = rainbowArr[parseInt(Math.random() * 7)];
-      box1.style.backgroundColor = color;
-      box1.style.opacity = "0.7";
+      box1.style.backgroundColor = "#000";
+      box1.style.opacity = opacity;
+      opacity += 0.1;
     });
   });
 };
@@ -111,7 +113,6 @@ const gridBoxes = (number) => {
     gridDisplay.style.gridTemplateColumns = "repeat(" + number + ",1fr)";
     var box = document.createElement("div");
     box.style.padding = "auto " + " calc(1px + " + number / number + ")";
-    box.style.border = "0.1px solid black";
     box.style.width = "auto";
     box.style.height = "auto";
     gridDisplay.appendChild(box);
@@ -162,17 +163,23 @@ slider.oninput = () => {
 };
 
 //clear button
-const boxes = gridDisplay.querySelectorAll("div");
 const clearButton = document.createElement("button");
 clearButton.textContent = "RESET";
 clearButton.style.marginRight = "auto";
 clearButton.style.marginLeft = "auto";
 clearButton.setAttribute("class", "clearButton");
+
 //clear function
 clearButton.addEventListener("click", () => {
+  let boxes = gridDisplay.querySelectorAll("div");
+
+  console.log("hello from clear button");
   boxes.forEach((box) => {
     box.style.backgroundColor = "white";
   });
+  if (gridColorType == "grey") {
+    greyColor(boxes);
+  }
 });
 
 body.appendChild(sketchHead);
