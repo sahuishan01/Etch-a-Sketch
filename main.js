@@ -1,9 +1,12 @@
+var gridColorType = "random";
 const body = document.querySelector("body");
+
 body.style.backgroundImage =
   "linear-gradient(to bottom right,  #a8ff78, #78ffd6)";
+body.style.height = "100vh";
 body.style.backgroundRepeat = "no-repeat";
-body.style.backgroundSize = "cover";
-var gridColorType = "random";
+body.style.overflow = "hidden";
+body.style.boxSizing = "border-box";
 
 // header
 const sketchHead = document.createElement("h1");
@@ -159,7 +162,10 @@ slider.oninput = () => {
   gridValue = slider.value;
   gridSize.textContent =
     "Your selected size is " + gridValue + " x " + gridValue;
+};
+slider.onmouseup = () => {
   gridBoxes(gridValue);
+  clearButton.click();
 };
 
 //clear button
