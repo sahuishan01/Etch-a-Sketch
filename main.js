@@ -1,45 +1,110 @@
 var gridColorType = "random";
 const body = document.querySelector("body");
+const html = document.querySelector("html");
+
+html.style.height = "100%";
+html.style.margin = "0";
 
 body.style.backgroundImage =
   "linear-gradient(to bottom right,  #a8ff78, #78ffd6)";
-body.style.height = "100vh";
+body.style.minHeight = "100%";
+body.style.margin = "0";
 body.style.backgroundRepeat = "no-repeat";
-body.style.overflow = "hidden";
 body.style.boxSizing = "border-box";
+body.style.display = "flex";
+body.style.padding = "2%";
+body.style.justifyContent = "space-around";
 
-// header
+const spinnerDiv = document.createElement("div")
+spinnerDiv.style.height = "100%";
+spinnerDiv.style.display = "absolute";
+spinnerDiv.style.top = "0";
+spinnerDiv.style.left = "0";
+spinnerDiv.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+spinnerDiv.style.width = "100%";
+spinnerDiv.style.zIndex = "1000";
+
+
+const spinner = document.createElement("div");
+spinner.classList.add("spinner");
+spinnerDiv.appendChild(spinner);
+
+const style = document.createElement("style");
+  style.type = "text/css";
+  style.innerHTML = `
+    @keyframes spinner {
+      to { transform: rotate(360deg); }
+    }
+    
+    .spinner:before {
+      content: '';
+      box-sizing: border-box;
+      position: absolute;
+      top: calc(50% - 10px);
+      left: calc(50% - 10px);
+      width: 20px;
+      height: 20px;
+      margin-top: -10px;
+      margin-left: -10px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      border-top-color: #000;
+      animation: spinner .6s linear infinite;
+    }
+  `;
+
+  // Append the style element to the head
+  document.head.appendChild(style);
+
+
+html.appendChild(spinnerDiv);
+
+// left side
+const leftDiv = document.createElement("section");
+leftDiv.style.margin = "0";
+leftDiv.style.boxSizing = "border-box";
+leftDiv.style.padding = "0";
+leftDiv.style.display = "flex";
+leftDiv.style.flexDirection = "column";
+leftDiv.style.rowGap = "2%";
+leftDiv.style.justifyContent = "center"
+
+// // header
 const sketchHead = document.createElement("h1");
 sketchHead.textContent = "Etch-a-Sketch";
+sketchHead.style.boxSizing = "border-box";
+sketchHead.style.margin = "0"
 sketchHead.style.textAlign = "center";
-sketchHead.style.fontSize = "5vh";
+sketchHead.style.fontSize = "3rem";
 sketchHead.style.textDecoration = "underline";
+leftDiv.appendChild(sketchHead);
 
-// create boxes
-const mainDiv = document.createElement("div"); //main div
-mainDiv.style.height = "657px";
-mainDiv.style.display = "flex";
-const optionBox = document.createElement("div"); //option box
-optionBox.style.display = "flex";
-optionBox.style.flexDirection = "column";
-optionBox.style.alignItems = "center";
-optionBox.style.width = "47.5vw";
-optionBox.style.marginRight = "2.5vw";
-optionBox.style.marginTop = "5vh";
-const gridDisplay = document.createElement("div"); //main Grid
-gridDisplay.style.display = "grid";
-gridDisplay.style.height = "600px";
-gridDisplay.style.width = "600px";
-gridDisplay.style.marginLeft = "2.5vw";
-gridDisplay.style.marginTop = "5vh";
-gridDisplay.style.border = "1px solid black";
-gridDisplay.style.backgroundColor = "#fff";
+//clear button
+const clearButton = document.createElement("button");
+clearButton.textContent = "RESET";
+clearButton.type = "button"
+clearButton.setAttribute("class", "clearButton");
 
-// Random colors
-const random1 = document.createElement("button");
-random1.style.marginTop = "2vh";
-random1.textContent = "Random";
-random1.addEventListener("click", () => {
+//clear function
+clearButton.addEventListener("click", clearGridColor);
+
+function clearGridColor(){
+  let boxes = gridContainer.querySelectorAll("div");
+  boxes.forEach((box) => {
+    box.style.backgroundColor = "white";
+  });
+  if (gridColorType == "grey") {
+    greyColor(boxes);
+  }
+}
+
+leftDiv.appendChild(clearButton);
+
+// // Random colors
+const randomColors = document.createElement("button");
+randomColors.textContent = "Random";
+randomColors.type = "button"
+randomColors.addEventListener("click", () => {
   gridColorType = "random";
   colorGrid();
 });
@@ -55,6 +120,8 @@ const randomColor = (boxes) => {
     });
   });
 };
+leftDiv.appendChild(randomColors);
+
 
 // Rainbow colors
 var rainbowArr = [
@@ -67,8 +134,8 @@ var rainbowArr = [
   "	#FF0000",
 ];
 const rainbow = document.createElement("button");
-rainbow.style.marginTop = "2vh";
 rainbow.textContent = "Rainbow";
+rainbow.type = "button"
 rainbow.addEventListener("click", () => {
   gridColorType = "rainbow";
   colorGrid();
@@ -84,16 +151,15 @@ const rainbowColor = (boxes) => {
     });
   });
 };
+leftDiv.appendChild(rainbow);
 
 // Greyscale
 const greyScale = document.createElement("button");
-greyScale.style.marginTop = "2vh";
 greyScale.textContent = "Greyscale";
-
+greyScale.type = "button"
 greyScale.addEventListener("click", () => {
   gridColorType = "grey";
   colorGrid();
-  console.log(gridColorType);
 });
 const greyColor = (boxes) => {
   boxes.forEach((box1) => {
@@ -106,26 +172,12 @@ const greyColor = (boxes) => {
     });
   });
 };
+leftDiv.append(greyScale);
 
-// function for  creating grids
-const gridBoxes = (number) => {
-  gridDisplay.innerHTML = "";
-  // grid create
-
-  for (i = 1; i <= number * number; i++) {
-    gridDisplay.style.gridTemplateColumns = "repeat(" + number + ",1fr)";
-    var box = document.createElement("div");
-    box.style.padding = "auto " + " calc(1px + " + number / number + ")";
-    box.style.width = "auto";
-    box.style.height = "auto";
-    gridDisplay.appendChild(box);
-  }
-  colorGrid();
-};
 
 // color grid
 const colorGrid = () => {
-  const boxes = gridDisplay.querySelectorAll("div");
+  const boxes = gridContainer.querySelectorAll("div");
   if (gridColorType == "grey") {
     greyColor(boxes);
   } else if (gridColorType == "rainbow") {
@@ -134,69 +186,87 @@ const colorGrid = () => {
     randomColor(boxes);
   }
 };
-// size selection
-const sizeDiv = document.createElement("div"); //div
-sizeDiv.style.display = "flex";
-sizeDiv.style.flexDirection = "column";
-sizeDiv.style.alignItems = "center";
 
-const sizeSelect = document.createElement("h3"); //header
-sizeSelect.textContent = "Select your grid size";
-sizeSelect.style.fontSize = "3vh";
+const centerDiv = document.createElement("section");
+centerDiv.style.margin = "0";
+centerDiv.style.display = "flex";
+centerDiv.style.flexDirection = "column"
+centerDiv.style.rowGap = "2%;"
+centerDiv.style.alignItems = "center";
+centerDiv.style.justifyContent = "center";
 
-const slider = document.createElement("input"); //slider
+const gridSizeText = document.createElement("h2");
+gridSizeText.style.textAlign = "center";
+gridSizeText.innerText = "Scroll the slider to change grid size\nCurrent Size 16 x 16";
+centerDiv.appendChild(gridSizeText);
+
+const gridContainer = document.createElement("div");
+gridContainer.style.margin = 0;
+gridContainer.style.padding = 0;
+gridContainer.style.width = "800px";
+gridContainer.style.height = "800px";
+gridContainer.style.backgroundColor = "white";
+gridContainer.style.display = "grid";
+
+centerDiv.appendChild(gridContainer);
+
+// // function for  creating grids
+  const gridBoxes = (number) => {
+    spinnerDiv.style.visibility = "visible";
+    gridContainer.innerHTML = "";
+    gridContainer.style.gridTemplateColumns = "repeat(" + number + ",1fr)";
+    setTimeout(() => {
+      // Create the grid
+      for (let i = 1; i <= number * number; i++) {
+        const box = document.createElement("div");
+        box.classList.add("paintBox");
+        box.style.padding = "auto";
+        box.style.width = "auto";
+        box.style.height = "auto";
+        gridContainer.appendChild(box);
+      }
+
+      // Call colorGrid after the grid is created
+      colorGrid();
+
+      // Hide the spinner after grid is created
+      spinnerDiv.style.visibility = "hidden";
+    }, 0);
+  };
+
+
+//right div
+const rightDiv = document.createElement("section");
+const slider = document.createElement("input");
 slider.type = "range";
 slider.min = "1";
-slider.max = "60";
+slider.max = "100";
 slider.value = "16";
-slider.style.width = "30vw";
-slider.style.height = "25px";
+slider.style.width = "10%";
+slider.style.height = "100%";
+slider.style.appearance = "slider-vertical";
 
-const gridSize = document.createElement("h2"); //display grid size
+rightDiv.appendChild(slider)
+
 var gridValue = slider.value;
 gridBoxes(gridValue);
-gridSize.textContent =
-  "Current grid size is  " + slider.value + " x " + slider.value;
-gridSize.style.fontSize = "2vh";
 slider.oninput = () => {
   gridValue = slider.value;
-  gridSize.textContent =
-    "Your selected size is " + gridValue + " x " + gridValue;
+  gridSizeText.innerText = "Scroll the slider to change grid size\nCurrent Size "+ gridValue + " x " + gridValue;
 };
 slider.onmouseup = () => {
+  clearGridColor()
   gridBoxes(gridValue);
-  clearButton.click();
 };
 
-//clear button
-const clearButton = document.createElement("button");
-clearButton.textContent = "RESET";
-clearButton.style.marginRight = "auto";
-clearButton.style.marginLeft = "auto";
-clearButton.setAttribute("class", "clearButton");
 
-//clear function
-clearButton.addEventListener("click", () => {
-  let boxes = gridDisplay.querySelectorAll("div");
-
-  console.log("hello from clear button");
-  boxes.forEach((box) => {
-    box.style.backgroundColor = "white";
-  });
-  if (gridColorType == "grey") {
-    greyColor(boxes);
-  }
-});
-
-body.appendChild(sketchHead);
-body.appendChild(sizeDiv);
-sizeDiv.appendChild(sizeSelect);
-sizeDiv.appendChild(slider);
-sizeDiv.appendChild(gridSize);
-body.appendChild(mainDiv);
-mainDiv.appendChild(optionBox);
-mainDiv.appendChild(gridDisplay);
-optionBox.appendChild(clearButton);
-optionBox.appendChild(random1);
-optionBox.appendChild(rainbow);
-optionBox.appendChild(greyScale);
+body.appendChild(leftDiv);
+body.appendChild(centerDiv);
+body.appendChild(rightDiv);
+// body.appendChild(mainDiv);
+// mainDiv.appendChild(optionBox);
+// mainDiv.appendChild(gridDisplay);
+// optionBox.appendChild(clearButton);
+// optionBox.appendChild(randomColors);
+// optionBox.appendChild(rainbow);
+// optionBox.appendChild(greyScale);
